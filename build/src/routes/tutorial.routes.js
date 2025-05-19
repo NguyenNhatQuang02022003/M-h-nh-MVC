@@ -13,15 +13,20 @@ class TutorialRoutes {
     }
     intializeRoutes() {
         // Create a new Tutorial
-        this.router.post("/", this.controller.create);
+        this.router.post("/", this.wrapAsync(this.controller.create.bind(this.controller)));
         // Retrieve all Tutorials
         this.router.get("/", this.controller.findAll);
         // Retrieve a single Tutorial with id
-        this.router.get("/:id", this.controller.findOne);
+        this.router.get("/:id", this.wrapAsync(this.controller.findOne.bind(this.controller)));
         // Update a Tutorial with id
-        this.router.put("/:id", this.controller.update);
+        this.router.put("/:id", this.wrapAsync(this.controller.update.bind(this.controller)));
         // Delete a Tutorial with id
-        this.router.delete("/:id", this.controller.delete);
+        this.router.delete("/:id", this.wrapAsync(this.controller.delete.bind(this.controller)));
+    }
+    wrapAsync(fn) {
+        return (req, res, next) => {
+            Promise.resolve(fn(req, res, next)).catch(next);
+        };
     }
 }
 exports.default = new TutorialRoutes().router;
