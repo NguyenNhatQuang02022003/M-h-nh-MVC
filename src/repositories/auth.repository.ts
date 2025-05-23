@@ -1,4 +1,3 @@
-
 import User from "../models/auth.model";
 import { Op } from "sequelize";
 
@@ -6,7 +5,7 @@ interface IUserRepository {
     signup(username: string, email: string, password: string, role: string): Promise<User>;
 }
 
-class userRepository implements IUserRepository {
+class UserRepository implements IUserRepository {
     async signup(username: string, email: string, password: string, role: string): Promise<User> {
         try {
             return await User.create({
@@ -20,4 +19,4 @@ class userRepository implements IUserRepository {
         }
     }
 }
-export default new userRepository();
+export default new UserRepository();

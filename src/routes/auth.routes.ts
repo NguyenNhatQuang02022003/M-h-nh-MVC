@@ -1,21 +1,17 @@
 import { Router, Request, Response, NextFunction } from "express";
-import authController from "../controllers/auth.controller"
+import AuthController from "../controllers/auth.controller"
 
-class authRoutes {
+class AuthRoutes {
     router = Router();
-    controller = new authController();
+    controller = new AuthController();
 
     constructor() {
         this.intializeRoutes();
     }
     intializeRoutes() {
         // đăng ký người dùng
-        this.router.post("/signup", this.wrapAsync(this.controller.signup.bind(this.controller)));
+        this.router.post("/signup", this.controller.signup);
     }
-    private wrapAsync(fn: (req: Request, res: Response, next?: NextFunction) => Promise<void | Response>) {
-        return (req: Request, res: Response, next: NextFunction) => {
-            Promise.resolve(fn(req, res, next)).catch(next);
-        };
-    }
+
 }
-export default new authRoutes().router;
+export default new AuthRoutes().router;

@@ -15,36 +15,24 @@ export default class User extends Model{
 
   @Column({
     type: DataType.STRING(255),
-    allowNull: true,
     field: 'username',
   })
   username?: string;
 
   @Column({
     type: DataType.STRING(255),
-    allowNull: true,
     field: 'email',
   })
   email?: string;
 
   @Column({
     type: DataType.STRING(255),
-    allowNull: true,
     field: 'password',
   })
   password?: string;
 
   @Column({
-    type: DataType.DATE,
-    allowNull: false,
-    defaultValue: DataType.NOW,
-    field: 'createat',
-  })
-  createat?: Date;
-
-  @Column({
     type: DataType.STRING(255),
-    allowNull: true,
     field: 'role',
   })
   role?: string;
