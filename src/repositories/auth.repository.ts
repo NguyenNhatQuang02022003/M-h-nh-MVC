@@ -7,7 +7,21 @@ interface IUserRepository {
 
 class UserRepository implements IUserRepository {
     async signup(username: string, email: string, password: string, role: string): Promise<User> {
+        // Kiểm tra trùng username or email
+        const user = await User.findOne({
+            where: {
+                [Op.or]: [
+                    { username: username },
+                    { email: email }
+                ]
+            }
+        });
+        console.log(user)
+        if (user) {
+            throw new Error("Username or email already exists!");
+        }
         try {
+            // tạo user mới
             return await User.create({
                 username: username,
                 email: email,

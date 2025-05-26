@@ -10,10 +10,16 @@ export default class UserController {
                 message: "create OK",
                 data: user
             });
-        } catch (err) {
-            res.status(500).json({
-                message: "Internal Server Error!"
-            });
+        } catch (err) 
+        {
+            console.log(err)
+            if (err instanceof Error && err.message === "Username or email already exists!") {
+                res.status(400).json({ message: err.message });
+            } 
+            else 
+            {
+                res.status(500).json({ message: "Internal Server Error!" });
+            }
         }
     }
 }
