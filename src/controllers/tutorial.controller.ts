@@ -57,6 +57,7 @@ export default class TutorialController {
 
   async findAll(req: Request, res: Response) {
     try {
+      
     const tutorials = await tutorialRepository.retrieveAll();
 
       res.status(200).json({

@@ -9,7 +9,6 @@ export default class UserController {
         try {
 
             const { username, password } = req.body;
-            
 
             // gọi signin ở repository kiểm tra username và password 
 
@@ -19,9 +18,15 @@ export default class UserController {
                 data: user
             });
         } catch (error) {
-            res.status(500).json({
-                message: "Internal Server Error!"
-            });
+            if (error instanceof Error && (error.message.includes("Invalid") || error.message.includes("Account"))) {
+                res.status(401).json({
+                    message: error.message
+                });
+            } else {
+                res.status(500).json({
+                    message: "Internal Server Error!"
+                });
+            }
         }
     }
 
