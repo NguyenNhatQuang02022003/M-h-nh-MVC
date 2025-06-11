@@ -4,7 +4,7 @@ import Database from "./src/db/index";
 const app: Application = express();
 const server: Server = new Server(app);
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 8080;
-
+import dotenv from 'dotenv'; dotenv.config();
 const db = new Database();
 app.get('/health', (req, res) => {
   res.send('App is running');

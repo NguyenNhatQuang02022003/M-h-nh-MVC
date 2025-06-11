@@ -19,7 +19,7 @@ class TutorialRoutes {
     this.router.get("/",[checkJwt], this.controller.findAll);
 
     // Retrieve a single Tutorial with id
-    this.router.get("/:id",[checkJwt, checkRole(["admin"])], this.wrapAsync(this.controller.findOne.bind(this.controller)));
+    this.router.get("/:id",[checkJwt], this.wrapAsync(this.controller.findOne.bind(this.controller)));
 
     // Update a Tutorial with id
     this.router.put("/:id",[checkJwt, checkRole(["admin"])], this.wrapAsync(this.controller.update.bind(this.controller)));

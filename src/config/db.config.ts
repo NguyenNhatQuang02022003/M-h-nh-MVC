@@ -1,17 +1,25 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+const jwtSecret = process.env.JWT;
+// nếu Jwt bị lỗi (undifine hoặc null) thì dừng chương trình, hiển thị lỗi
+// nếu jwt là null hoặc undefine thì chứa giá trị không hợp lệ -> rủi ro về bảo mật cao
+if (!jwtSecret) {
+  throw new Error("JWT secret is not defined in environment variables.");
+}
+
 export const config = {
-  HOST: "127.0.0.1",
-  USER: "root",
-  PASSWORD: "123456",
-  DB: "testdb",
+  HOST: process.env.DATABASE_HOST,
+  USER: process.env.DATABASE_USER,
+  PASSWORD: process.env.DATABASE_PASS,
+  DB: process.env.DATABASE_NAME,
   pool: {
     max: 5,
     min: 0,
     acquire: 30000,
-    idle: 10000
+    idle: 10000,
   },
-
-  // Thêm khóa bí mật JWT
-  jwtSecret: "your-very-secret-key"  // Bạn nên dùng biến môi trường thay vì viết cứng
+  jwtSecret,
 };
 
 export const dialect = "mysql";
