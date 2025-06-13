@@ -2,6 +2,7 @@
   import cors, { CorsOptions } from "cors";
   import Routes from "./routes";
   import { swaggerUi, swaggerSpec } from "./docs/swagger";
+import tutorialRoutes from "./routes/tutorial.routes";
 
   export default class Server {
     constructor(app: Application) {
@@ -17,7 +18,6 @@
       app.use(cors(corsOptions));
       app.use(express.json());
       app.use(express.urlencoded({ extended: true }));
-
       app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     }
   }
