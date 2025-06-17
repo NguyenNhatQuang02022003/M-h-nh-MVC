@@ -1,9 +1,10 @@
-// .sequelizerc
-const path = require("path");
+const path = require('path');
 
+require('ts-node/register');
+require('tsconfig-paths/register'); // 👈 BỔ SUNG NÀY ĐỂ FIX LỖI .ts CONFIG
 module.exports = {
-  config: path.resolve("sequelize.config.js"),
-  modelsPath: path.resolve("src/models"),
-  migrationsPath: path.resolve("src/migrations"),
-  seedersPath: path.resolve("src/seeders"),
+  'config': path.resolve(__dirname, 'sequelize.config.js'),
+  'models-path': path.resolve(__dirname, 'src/models'),
+  'seeders-path': path.resolve(__dirname, 'src/seeders'),
+  'migrations-path': path.resolve(__dirname, 'src/migrations'),
 };

@@ -1,5 +1,4 @@
-// sequelize.config.js
-require("dotenv").config();
+require('dotenv').config();
 
 module.exports = {
   development: {
@@ -7,6 +6,6 @@ module.exports = {
     password: process.env.DATABASE_PASS,
     database: process.env.DATABASE_NAME,
     host: process.env.DATABASE_HOST,
-    dialect: "mysql",
+    dialect: 'mysql',
   }
 };
