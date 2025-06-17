@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = {
+  //npx sequelize-cli db:seed:all
   async up(queryInterface, Sequelize) {
     await queryInterface.bulkInsert('user', [
       {
@@ -38,7 +39,8 @@ module.exports = {
       
     ]);
   },
-
+  //npx sequelize-cli db:seed:undo	Rollback seed file cuối cùng vừa chạy.
+  //npx sequelize-cli db:seed:undo:all	Xóa toàn bộ dữ liệu được tạo bởi tất cả seed files
   async down(queryInterface, Sequelize) {
     await queryInterface.bulkDelete('user', null, {});
   }
