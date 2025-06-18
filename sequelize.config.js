@@ -1,3 +1,5 @@
+// cấu hình kết nối cơ sở dữ liệu cho Sequelize
+
 require('dotenv').config();
 
 module.exports = {

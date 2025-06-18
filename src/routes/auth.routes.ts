@@ -66,7 +66,7 @@ class AuthRoutes {
          *             properties:
          *               username:
          *                 type: string
-         *                 example: nhat
+         *                 example: quang
          *               password:
          *                 type: string
          *                 example: 123

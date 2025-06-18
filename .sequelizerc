@@ -1,7 +1,9 @@
+// cấu hình lại đường dẫn mặc định của Sequelize CLI khi làm việc với dự án có cấu trúc tùy chỉnh
+
 const path = require('path');
 
 require('ts-node/register');
-require('tsconfig-paths/register'); // 👈 BỔ SUNG NÀY ĐỂ FIX LỖI .ts CONFIG
+require('tsconfig-paths/register'); 
 module.exports = {
   'config': path.resolve(__dirname, 'sequelize.config.js'),
   'models-path': path.resolve(__dirname, 'src/models'),

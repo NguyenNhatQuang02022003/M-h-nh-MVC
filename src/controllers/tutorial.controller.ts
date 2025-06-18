@@ -57,8 +57,16 @@ export default class TutorialController {
 
   async findAll(req: Request, res: Response) {
     try {
-      
-    const tutorials = await tutorialRepository.retrieveAll();
+      // Lấy giá trị offset từ query string (ví dụ: /api/tutorials?offset=10)
+      // Nếu không có thì mặc định là 0 (bắt đầu từ bản ghi đầu tiên)
+      const offset = parseInt(req.query.offset as string, 10) || 0;
+
+      // Lấy giá trị limit từ query string (ví dụ: /api/tutorials?limit=5)
+      // Nếu không có thì mặc định là 10 (mỗi trang lấy tối đa 10 bản ghi)
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+
+      // Gọi repository để lấy danh sách tutorials theo phân trang
+      const tutorials = await tutorialRepository.retrieveAll(offset, limit);
 
       res.status(200).json({
         message: "findAll OK",
@@ -71,19 +79,21 @@ export default class TutorialController {
     }
   }
 
+
+
   async findOne(req: Request, res: Response) {
     try {
       const tutorialId = parseInt(req.params.id, 10);
 
-    if (isNaN(tutorialId)) {
-      return res.status(400).json({ message: "Invalid tutorial ID" });
-    }
+      if (isNaN(tutorialId)) {
+        return res.status(400).json({ message: "Invalid tutorial ID" });
+      }
 
-    const tutorial = await tutorialRepository.retrieveById(tutorialId);
+      const tutorial = await tutorialRepository.retrieveById(tutorialId);
 
-    if (!tutorial) {
-      return res.status(404).json({ message: "Tutorial not found" });
-    }
+      if (!tutorial) {
+        return res.status(404).json({ message: "Tutorial not found" });
+      }
       res.status(200).json({
         message: "findOne OK",
         data: tutorial
@@ -100,9 +110,9 @@ export default class TutorialController {
     try {
       const tutorialId = parseInt(req.params.id, 10);
 
-    if (isNaN(tutorialId)) {
-      return res.status(400).json({ message: "Invalid tutorial ID" });
-    }
+      if (isNaN(tutorialId)) {
+        return res.status(400).json({ message: "Invalid tutorial ID" });
+      }
       const tutorial = await tutorialRepository.delete(tutorialId);
       res.status(200).json({
         message: "delete OK",

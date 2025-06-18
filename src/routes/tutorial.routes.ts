@@ -64,74 +64,87 @@ class TutorialRoutes {
     this.router.post("/", [checkJwt, checkRole(["admin"])], this.wrapAsync(this.controller.create.bind(this.controller)));
     // Retrieve all Tutorials
     /**
- * @swagger
- * /api/tutorials/:
- *   get:
- *     summary: Lấy danh sách tất cả tutorials
- *     tags: [Tutorials]
- *     description: Trả về tất cả tutorials trong hệ thống. Yêu cầu xác thực bằng JWT.
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: findAll OK
- *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Tutorial'
- *       401:
- *         description: Unauthorized - thiếu hoặc sai token
- *       500:
- *         description: Internal Server Error
- */
+     * @swagger
+     * /api/tutorials/:
+     *   get:
+     *     summary: Lấy danh sách tất cả tutorials (phân trang)
+     *     tags: [Tutorials]
+     *     description: Trả về tất cả tutorials trong hệ thống với phân trang. Yêu cầu xác thực bằng JWT.
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: query
+     *         name: offset
+     *         schema:
+     *           type: integer
+     *           default: 0
+     *         description: Số lượng bản ghi bỏ qua
+     *       - in: query
+     *         name: limit
+     *         schema:
+     *           type: integer
+     *           default: 10
+     *         description: Số lượng bản ghi trả về
+     *     responses:
+     *       200:
+     *         description: Thành công
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: findAll OK
+     *                 data:
+     *                   type: array
+     *                   items:
+     *                     $ref: '#/components/schemas/Tutorial'
+     *       401:
+     *         description: Unauthorized
+     *       500:
+     *         description: Internal Server Error
+     */
     this.router.get("/", [checkJwt], this.controller.findAll);
     // Retrieve a single Tutorial with id
-/**
- * @swagger
- * /api/tutorials/{id}:
- *   get:
- *     summary: Lấy một tutorial theo ID
- *     tags: [Tutorials]
- *     description: Trả về một tutorial theo ID. Yêu cầu xác thực JWT.
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID của tutorial cần tìm
- *     responses:
- *       200:
- *         description: Thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: findOne OK
- *                 data:
- *                   $ref: '#/components/schemas/Tutorial'
- *       400:
- *         description: ID không hợp lệ
- *       401:
- *         description: Unauthorized - thiếu hoặc sai token
- *       404:
- *         description: Không tìm thấy tutorial
- *       500:
- *         description: Lỗi server nội bộ
- */
+    /**
+     * @swagger
+     * /api/tutorials/{id}:
+     *   get:
+     *     summary: Lấy một tutorial theo ID
+     *     tags: [Tutorials]
+     *     description: Trả về một tutorial theo ID. Yêu cầu xác thực JWT.
+     *     security:
+     *       - bearerAuth: []
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         schema:
+     *           type: integer
+     *         description: ID của tutorial cần tìm
+     *     responses:
+     *       200:
+     *         description: Thành công
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 message:
+     *                   type: string
+     *                   example: findOne OK
+     *                 data:
+     *                   $ref: '#/components/schemas/Tutorial'
+     *       400:
+     *         description: ID không hợp lệ
+     *       401:
+     *         description: Unauthorized - thiếu hoặc sai token
+     *       404:
+     *         description: Không tìm thấy tutorial
+     *       500:
+     *         description: Lỗi server nội bộ
+     */
     this.router.get("/:id", [checkJwt], this.wrapAsync(this.controller.findOne.bind(this.controller)));
     // Update a Tutorial with id
     /**
