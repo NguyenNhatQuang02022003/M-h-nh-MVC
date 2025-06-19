@@ -1,11 +1,18 @@
-import { Model, Table, Column, DataType } from "sequelize-typescript";
+import {
+  Model,
+  Table,
+  Column,
+  DataType,
+  HasMany
+} from "sequelize-typescript";
+import Tutorial from "./tutorial.model"; // Đảm bảo đường dẫn chính xác
 
 @Table({
-    tableName: "user",
-    timestamps: false
+  tableName: "user",
+  timestamps: false
 })
-export default class User extends Model{
-    @Column({
+export default class User extends Model {
+  @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
@@ -36,4 +43,7 @@ export default class User extends Model{
     field: 'role',
   })
   role?: string;
+
+  @HasMany(() => Tutorial)
+  tutorials?: Tutorial[];
 }

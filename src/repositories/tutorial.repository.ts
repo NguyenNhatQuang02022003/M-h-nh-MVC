@@ -2,77 +2,96 @@ import Tutorial from "../models/tutorial.model";
 import { Op } from "sequelize";
 
 interface ITutorialRepository {
-  save(title: string, description: string, published: boolean): Promise<Tutorial>;
-  retrieveAll(offset: number, limit: number): Promise<Tutorial[]>;
-  retrieveById(tutorialId: number): Promise<Tutorial | null>;
-  update(tutorial: Tutorial): Promise<number>;
-  delete(tutorialId: number): Promise<number>;
-  deleteAll(): Promise<number>;
+  save(title: string, description: string, published: boolean, userId: number): Promise<Tutorial>; // 🆕 thêm userId
+  retrieveAll(offset: number, limit: number, userId: number): Promise<Tutorial[]>; // 🆕 thêm userId
+  retrieveById(tutorialId: number, userId: number): Promise<Tutorial | null>; // 🆕 thêm userId
+  update(tutorial: Tutorial, userId: number): Promise<number>; // 🆕 thêm userId
+  delete(tutorialId: number, userId: number): Promise<number>; // 🆕 thêm userId
+  deleteAll(userId: number): Promise<number>; // 🆕 thêm userId
 }
 
+// cách giải quyết vấn đề:
+// thêm UserId cho tutorials và dùng where để truy vấn ra UserId đang đăng nhập để trao quyền CRUD hợp lý
 
 class TutorialRepository implements ITutorialRepository {
-  async save(title: string, description: string, published: boolean): Promise<Tutorial> {
+  //  TẠO mới Tutorial với userId
+  async save(title: string, description: string, published: boolean, userId: number): Promise<Tutorial> {
     try {
       return await Tutorial.create({
-        title: title,
-        description: description,
-        published: published
+        title,
+        description,
+        published,
+        userId
       });
     } catch (err) {
       throw new Error("Failed to create Tutorial!");
     }
   }
 
-  async retrieveAll(offset: number, limit: number): Promise<Tutorial[]> {
+  async retrieveAll(offset: number, limit: number, userId: number): Promise<Tutorial[]> {
     try {
       return await Tutorial.findAll({
-        offset, // Bỏ qua 'offset' bản ghi đầu tiên offset = 10 sẽ bỏ 10 đối tượng đầu
-        limit,  // Giới hạn số bản ghi trả về là 'limit' sẽ lấy các đối tượng tiếp theo sau khi đã bỏ qua offset
-        order: [["id", "ASC"]], // để sắp xếp id tăng dần(ASC)
+        //thêm where để chỉ lấy tutorial của user hiện tại đang đăng nhập
+        where: { userId },
+        offset,
+        limit,
+        order: [["id", "ASC"]],
       });
     } catch (error) {
       throw new Error("Failed to retrieve Tutorials!");
     }
   }
 
-  async retrieveById(tutorialId: number): Promise<Tutorial | null> {
+  async retrieveById(tutorialId: number, userId: number): Promise<Tutorial | null> {
     try {
-      return await Tutorial.findByPk(tutorialId);
+      return await Tutorial.findOne({
+        where: {
+          id: tutorialId,
+          userId // chỉ lấy tutorial nếu đúng userId
+        }
+      });
     } catch (error) {
-      throw new Error("Failed to retrieve Tutorials!");
+      throw new Error("Failed to retrieve Tutorial!");
     }
   }
 
-  async update(tutorial: Tutorial): Promise<number> {
+  async update(tutorial: Tutorial, userId: number): Promise<number> {
     const { id, title, description, published } = tutorial;
 
     try {
-      const affectedRows = await Tutorial.update(
+      const [affectedRows] = await Tutorial.update(
         { title, description, published },
-        { where: { id: id } }
+        {
+          where: {
+            id,
+            userId  // chỉ cập nhật nếu đúng userId
+          }
+        }
       );
 
-      return affectedRows[0];
+      return affectedRows;
     } catch (error) {
       throw new Error("Failed to update Tutorial!");
     }
   }
 
-  async delete(tutorialId: number): Promise<number> {
+  async delete(tutorialId: number, userId: number): Promise<number> {
     try {
-      const affectedRows = await Tutorial.destroy({ where: { id: tutorialId } });
-
-      return affectedRows;
+      return await Tutorial.destroy({
+        where: {
+          id: tutorialId,
+          userId //  chỉ xoá nếu đúng userId
+        }
+      });
     } catch (error) {
       throw new Error("Failed to delete Tutorial!");
     }
   }
 
-  async deleteAll(): Promise<number> {
+  async deleteAll(userId: number): Promise<number> {
     try {
-      return Tutorial.destroy({
-        where: {},
+      return await Tutorial.destroy({
+        where: { userId }, // chỉ xoá tutorial của user này
         truncate: false
       });
     } catch (error) {

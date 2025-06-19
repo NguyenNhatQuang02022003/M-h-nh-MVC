@@ -4,11 +4,12 @@ import tutorialRepository from "../repositories/tutorial.repository";
 
 export default class TutorialController {
   async create(req: Request, res: Response) {
-    // định nghĩa request là gì và response 
-    // sau đó sử dụng từ logic model
     const { title, description, published } = req.body;
+
+    const userId = res.locals.user.id; //  Lấy userId từ token đã giải mã
+
     try {
-      const tutorial = await tutorialRepository.save(title, description, published);
+      const tutorial = await tutorialRepository.save(title, description, published, userId); //  Truyền userId
 
       res.status(201).json({
         message: "create OK",
@@ -23,27 +24,24 @@ export default class TutorialController {
 
   async update(req: Request, res: Response) {
     try {
-      const id = req.params.id;
+      const id = parseInt(req.params.id);
       const { title, description, published } = req.body;
+      const userId = res.locals.user.id; // Lấy userId từ token
 
-      // 1. Tìm tutorial theo ID
-      const existingTutorial = await tutorialRepository.retrieveById(Number(id));
+      const existingTutorial = await tutorialRepository.retrieveById(id, userId); // Tìm tutorial theo userId
 
       if (!existingTutorial) {
         return res.status(404).json({
-          message: "Tutorial not found"
+          message: "Tutorial not found or access denied"
         });
       }
 
-      // 2. Cập nhật các trường (nếu có giá trị mới)
       existingTutorial.title = title ?? existingTutorial.title;
       existingTutorial.description = description ?? existingTutorial.description;
       existingTutorial.published = published ?? existingTutorial.published;
 
-      // 3. Lưu thay đổi vào DB
-      await tutorialRepository.update(existingTutorial);
+      await tutorialRepository.update(existingTutorial, userId); // Truyền userId vào update
 
-      // 4. Trả kết quả
       res.status(200).json({
         message: "update OK",
         data: existingTutorial,
@@ -57,16 +55,12 @@ export default class TutorialController {
 
   async findAll(req: Request, res: Response) {
     try {
-      // Lấy giá trị offset từ query string (ví dụ: /api/tutorials?offset=10)
-      // Nếu không có thì mặc định là 0 (bắt đầu từ bản ghi đầu tiên)
       const offset = parseInt(req.query.offset as string, 10) || 0;
-
-      // Lấy giá trị limit từ query string (ví dụ: /api/tutorials?limit=5)
-      // Nếu không có thì mặc định là 10 (mỗi trang lấy tối đa 10 bản ghi)
       const limit = parseInt(req.query.limit as string, 10) || 10;
 
-      // Gọi repository để lấy danh sách tutorials theo phân trang
-      const tutorials = await tutorialRepository.retrieveAll(offset, limit);
+      const userId = res.locals.user.id; // Lấy userId từ token
+
+      const tutorials = await tutorialRepository.retrieveAll(offset, limit, userId); // Truyền userId
 
       res.status(200).json({
         message: "findAll OK",
@@ -79,21 +73,21 @@ export default class TutorialController {
     }
   }
 
-
-
   async findOne(req: Request, res: Response) {
     try {
       const tutorialId = parseInt(req.params.id, 10);
+      const userId = res.locals.user.id; // Lấy userId từ token
 
       if (isNaN(tutorialId)) {
         return res.status(400).json({ message: "Invalid tutorial ID" });
       }
 
-      const tutorial = await tutorialRepository.retrieveById(tutorialId);
+      const tutorial = await tutorialRepository.retrieveById(tutorialId, userId); // Truyền userId
 
       if (!tutorial) {
-        return res.status(404).json({ message: "Tutorial not found" });
+        return res.status(404).json({ message: "Tutorial not found or access denied" });
       }
+
       res.status(200).json({
         message: "findOne OK",
         data: tutorial
@@ -105,17 +99,42 @@ export default class TutorialController {
     }
   }
 
-
   async delete(req: Request, res: Response) {
     try {
       const tutorialId = parseInt(req.params.id, 10);
+      const userId = res.locals.user.id; // Lấy userId từ token
 
       if (isNaN(tutorialId)) {
         return res.status(400).json({ message: "Invalid tutorial ID" });
       }
-      const tutorial = await tutorialRepository.delete(tutorialId);
+
+      const deletedCount = await tutorialRepository.delete(tutorialId, userId); // Truyền userId
+
+      if (deletedCount === 0) {
+        return res.status(404).json({
+          message: "Tutorial not found or access denied"
+        });
+      }
+
       res.status(200).json({
         message: "delete OK",
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: "Internal Server Error!"
+      });
+    }
+  }
+
+  async deleteAll(req: Request, res: Response) {
+    try {
+      const userId = res.locals.user.id; // lấy userId từ token
+
+      const count = await tutorialRepository.deleteAll(userId); // Truyền userId
+
+      res.status(200).json({
+        message: "All tutorials deleted for user",
+        deleted: count
       });
     } catch (err) {
       res.status(500).json({
