@@ -48,4 +48,37 @@ export default class UserController {
             }
         }
     }
+    async changePassword(req: Request, res: Response): Promise<void> {
+        try {
+            const userId = res.locals.user.id; // từ middleware checkJWT
+            const { oldPassword, newPassword } = req.body;
+
+            // Kiểm tra đầu vào
+            if (!oldPassword || !newPassword) {
+                res.status(400).json({ message: "Old and new password are required." });
+                return;
+            }
+
+            const success = await authRepository.changePassword(userId, oldPassword, newPassword);
+
+            if (!success) {
+                res.status(400).json({ message: "Change password failed." });
+                return;
+            }
+
+            res.status(200).json({
+                message: "Password changed successfully."
+            });
+
+        } catch (error) {
+            if (error instanceof Error && error.message.includes("incorrect")) {
+                res.status(401).json({ message: error.message });
+            } else if (error instanceof Error && error.message.includes("not found")) {
+                res.status(404).json({ message: error.message });
+            } else {
+                res.status(500).json({ message: "Internal Server Error!" });
+            }
+
+        }
+    }
 }

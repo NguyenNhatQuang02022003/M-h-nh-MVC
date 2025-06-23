@@ -2,12 +2,12 @@ import Tutorial from "../models/tutorial.model";
 import { Op } from "sequelize";
 
 interface ITutorialRepository {
-  save(title: string, description: string, published: boolean, userId: number): Promise<Tutorial>; // 🆕 thêm userId
-  retrieveAll(offset: number, limit: number, userId: number): Promise<Tutorial[]>; // 🆕 thêm userId
-  retrieveById(tutorialId: number, userId: number): Promise<Tutorial | null>; // 🆕 thêm userId
-  update(tutorial: Tutorial, userId: number): Promise<number>; // 🆕 thêm userId
-  delete(tutorialId: number, userId: number): Promise<number>; // 🆕 thêm userId
-  deleteAll(userId: number): Promise<number>; // 🆕 thêm userId
+  save(title: string, description: string, published: boolean, userId: number): Promise<Tutorial>; 
+  retrieveAll(offset: number, limit: number, userId: number): Promise<Tutorial[]>; 
+  retrieveById(tutorialId: number, userId: number): Promise<Tutorial | null>;  
+  update(tutorial: Tutorial, userId: number): Promise<number>; 
+  delete(tutorialId: number, userId: number): Promise<number>;  
+  deleteAll(userId: number): Promise<number>; 
 }
 
 // cách giải quyết vấn đề:

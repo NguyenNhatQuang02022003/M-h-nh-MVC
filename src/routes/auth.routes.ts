@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import AuthController from "../controllers/auth.controller"
-
+import { checkJwt } from "../middleware/auth.checkJWT";
 class AuthRoutes {
     router = Router();
     controller = new AuthController();
@@ -77,7 +77,45 @@ class AuthRoutes {
          *         description: Invalid username or password
          */
         this.router.post("/signin", this.wrapAsync(this.controller.signin.bind(this.controller)));
+        
+
+        /**
+         * @swagger
+         * /api/auth/change-password:
+         *   post:
+         *     summary: Đổi mật khẩu người dùng
+         *     tags: [Auth]
+         *     security:
+         *       - bearerAuth: []
+         *     requestBody:
+         *       required: true
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             required:
+         *               - oldPassword
+         *               - newPassword
+         *             properties:
+         *               oldPassword:
+         *                 type: string
+         *                 example: currentPassword123
+         *               newPassword:
+         *                 type: string
+         *                 example: newPassword456
+         *     responses:
+         *       200:
+         *         description: Đổi mật khẩu thành công
+         *       400:
+         *         description: Thiếu dữ liệu hoặc sai mật khẩu cũ
+         *       401:
+         *         description: Không có quyền hoặc token không hợp lệ
+         *       500:
+         *         description: Lỗi server
+         */
+        this.router.post("/change-password", [checkJwt] ,this.wrapAsync(this.controller.changePassword.bind(this.controller)));
     }
+
     private wrapAsync(fn: (req: Request, res: Response, next?: NextFunction) => Promise<void | Response>) {
         return (req: Request, res: Response, next: NextFunction) => {
             Promise.resolve(fn(req, res, next)).catch(next);
