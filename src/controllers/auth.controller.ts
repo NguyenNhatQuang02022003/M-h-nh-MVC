@@ -10,8 +10,6 @@ export default class UserController {
 
             const { username, password } = req.body;
 
-            // gọi signin ở repository kiểm tra username và password 
-
             const user = await authRepository.signin(username, password);
             res.status(200).json({
                 message: "sign in is ok",
@@ -50,10 +48,10 @@ export default class UserController {
     }
     async changePassword(req: Request, res: Response): Promise<void> {
         try {
-            const userId = res.locals.user.id; // từ middleware checkJWT
+            const userId = res.locals.user.id; 
             const { oldPassword, newPassword } = req.body;
 
-            // Kiểm tra đầu vào
+            
             if (!oldPassword || !newPassword) {
                 res.status(400).json({ message: "Old and new password are required." });
                 return;
